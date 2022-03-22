@@ -79,11 +79,11 @@
 	});
 
 	window.addEventListener('keydown', async event => {
-		console.log(event);
+		// console.log(event);
 		keyDown(event.code);
 	});
 	window.addEventListener('keyup', async event => {
-		console.log(event.code);
+		// console.log(event.code);
 		keyUp(event);
 	});
 })();

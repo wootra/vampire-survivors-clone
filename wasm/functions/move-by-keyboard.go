@@ -1,8 +1,9 @@
 package functions
 
 import (
-	"fmt"
 	"syscall/js" //to fix the redline, refer .vscode/settings.json in this workspace
+
+	"github.com/wootra/vampire-survivors-clone/wasm/functions/characters"
 )
 
 func KeyDown(data *Data, this js.Value, args []js.Value) interface{} {
@@ -10,24 +11,24 @@ func KeyDown(data *Data, this js.Value, args []js.Value) interface{} {
 
 	switch code {
 	case "ArrowDown":
-		data.character.movementCode = DOWN
+		data.character.MovementCode = characters.DOWN
 		break
 	case "ArrowUp":
-		data.character.movementCode = UP
+		data.character.MovementCode = characters.UP
 		break
 	case "ArrowLeft":
-		data.character.movementCode = LEFT
+		data.character.MovementCode = characters.LEFT
 		break
 	case "ArrowRight":
-		data.character.movementCode = RIGHT
+		data.character.MovementCode = characters.RIGHT
 		break
 	}
-	fmt.Println("key down")
+	// fmt.Println("key down")
 	return ""
 }
 
 func KeyUp(data *Data, this js.Value, args []js.Value) interface{} {
-	fmt.Println("key up")
-	data.character.movementCode = STOP
+	// fmt.Println("key up")
+	data.character.MovementCode = characters.STOP
 	return ""
 }

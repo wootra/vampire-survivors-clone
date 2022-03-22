@@ -44,8 +44,8 @@ func SetCanvasFuncs(data *Data, this js.Value, args []js.Value) interface{} {
 
 	if data.canvas.width == 0 && data.canvas.height == 0 {
 		//when window size is initialized, set character's position
-		data.character.posX = 50
-		data.character.posY = 50
+		data.character.PosX = 50
+		data.character.PosY = 50
 	}
 	data.canvas.width = args[0].Int()
 	data.canvas.height = args[1].Int()
@@ -65,7 +65,7 @@ func DrawInCanvas(data *Data) interface{} {
 	xScale := float32(data.canvas.width) / 100
 	yScale := float32(data.canvas.height) / 100
 	var charSize float32 = 10
-	data.canvas.GetContext().fillRect(data.character.posX*xScale-charSize/2, data.character.posY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
-	// fmt.Println("draw in canvas", data.character.posX*xScale, data.character.posY*yScale)
+	data.canvas.GetContext().fillRect(data.character.PosX*xScale-charSize/2, data.character.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
+	// fmt.Println("draw in canvas", data.character.PosX*xScale, data.character.PosY*yScale)
 	return ""
 }
