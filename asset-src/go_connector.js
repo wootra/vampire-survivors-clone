@@ -42,9 +42,32 @@
 				getContext: () => {
 					return canvas.getContext('2d');
 				},
-				getBackground: () => {
+				getBackground: fileName => {
 					const image = new Image();
-					image.src = './images/milky-way-g2aa80c0ab_640.jpeg';
+					console.log('drawing back:', fileName);
+					image.src = `./images/${fileName}.jpeg`;
+
+					const ctx = canvas.getContext('2d');
+					image.addEventListener('load', () => {
+						console.log(image);
+						setBackground({ image });
+						ctx.drawImage(
+							image,
+							0,
+							0,
+							image.naturalWidth,
+							image.naturalHeight,
+							0,
+							0,
+							window.innerWidth,
+							window.innerHeight
+						);
+					});
+					// image.onload = img => {
+
+					// 	ctx.drawImage(image, 0, 0, 100, 100);
+					// };
+
 					return image;
 				},
 			});

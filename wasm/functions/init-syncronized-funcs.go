@@ -8,6 +8,13 @@ import (
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
 )
 
+func Wrapper(data *types.Data, funcToWrap func(*types.Data, js.Value, []js.Value) interface{}) js.Func {
+	ret := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		return funcToWrap(data, this, args)
+	})
+	return ret
+}
+
 func setCanvasFuncs(data *types.Data, this js.Value, args []js.Value) interface{} {
 	SetCanvas(data, args[0].Int(), args[1].Int(), &args[2])
 	return ""
@@ -28,23 +35,18 @@ func keyUpSync(data *types.Data, this js.Value, args []js.Value) interface{} {
 	return ""
 }
 
-func Wrapper(data *types.Data, funcToWrap func(*types.Data, js.Value, []js.Value) interface{}) js.Func {
-	ret := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		return funcToWrap(data, this, args)
-	})
-	return ret
+func setBackgroundSync(data *types.Data, this js.Value, args []js.Value) interface{} {
+	data.Canvas.Background = types.BitmapImage(args[0].Get("image"))
+	return ""
 }
 
 func InitEvents(data *types.Data) {
-	var clickByMouse = Wrapper(data, clickByMouseSync)
-	var setCanvas = Wrapper(data, setCanvasFuncs)
-	var keyDown = Wrapper(data, keyDownSync)
-	var keyUp = Wrapper(data, keyUpSync)
 
-	js.Global().Set("clickByMouse", clickByMouse)
-	js.Global().Set("setCanvas", setCanvas)
-	js.Global().Set("keyDown", keyDown)
-	js.Global().Set("keyUp", keyUp)
+	js.Global().Set("clickByMouse", Wrapper(data, clickByMouseSync))
+	js.Global().Set("setCanvas", Wrapper(data, setCanvasFuncs))
+	js.Global().Set("keyDown", Wrapper(data, keyDownSync))
+	js.Global().Set("keyUp", Wrapper(data, keyUpSync))
+	js.Global().Set("setBackground", Wrapper(data, setBackgroundSync))
 }
 
 func InitCharacters(data *types.Data) {

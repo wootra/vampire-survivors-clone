@@ -27,6 +27,15 @@ func (c Context2D) FillRect(x, y, w, h float32, r, g, b, a uint8) {
 	js.Value(c).Call("fillRect", x, y, w, h)
 }
 
+func (c *Canvas) DrawBackground() {
+	if !js.Value(c.Background).IsUndefined() {
+		js.Value(c.Context).Call("drawImage", c.Background, 20, 20, 185, 175, 50, 50, 185, 175)
+	} else {
+		fmt.Println("background image is undefined")
+	}
+
+}
+
 func (c Canvas) GetContext() Context2D {
 	if c.CanvasFuncs != nil {
 		return Context2D(c.Context)

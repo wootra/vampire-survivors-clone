@@ -37,7 +37,8 @@ func SetCanvas(data *types.Data, width, height int, funcs *js.Value) {
 
 	fmt.Printf("%T", data.Canvas.Context)
 	data.Canvas.Init = true
+	data.Canvas.CanvasFuncs.Call("getBackground", "back-1")
 	// data.Canvas.Background = types.BitmapImage(data.Canvas.CanvasFuncs.Call("getBackground"))
-
+	// data.Canvas.DrawBackground()
 	fmt.Println("width", data.Canvas.Width, "height", data.Canvas.Height)
 }
