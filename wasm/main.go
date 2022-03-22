@@ -3,10 +3,11 @@ package main
 import (
 	gameLoop "github.com/kutase/go-gameloop"
 	funcs "github.com/wootra/vampire-survivors-clone/wasm/functions"
+	"github.com/wootra/vampire-survivors-clone/wasm/types"
 )
 
 func main() {
-	var data funcs.Data = funcs.CreateNewData()
+	var data types.Data = funcs.CreateNewData()
 	funcs.InitCharacters(&data)
 	funcs.InitEvents(&data)
 

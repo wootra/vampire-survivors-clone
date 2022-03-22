@@ -2,21 +2,17 @@ package characters
 
 import (
 	"math/rand"
+
 	//to fix the redline, refer .vscode/settings.json in this workspace
 	"github.com/wootra/vampire-survivors-clone/wasm/functions/weapon"
+	"github.com/wootra/vampire-survivors-clone/wasm/types"
 )
 
-type EnemyName string
-
-const (
-	BAT EnemyName = "BAT"
-)
-
-func CreateNewEnemyData(enemyName EnemyName) EnemyData {
+func CreateNewEnemyData(enemyName types.EnemyName) types.EnemyData {
 	rand.Seed(100)
 	switch enemyName {
-	case BAT:
-		return EnemyData{enemyName, -rand.Float32(), -rand.Float32(), 0.5, 0, 0, 100, weapon.GUN, weapon.CreateAGun(), FLY}
+	case types.BAT:
+		return types.EnemyData{enemyName, -rand.Float32(), -rand.Float32(), 0.5, 0, 0, 100, weapon.CreateAWeapon(types.GUN), types.FLY}
 	}
-	return EnemyData{enemyName, -rand.Float32(), -rand.Float32(), 0.5, 0, 0, 100, weapon.GUN, weapon.CreateAGun(), FLY}
+	return types.EnemyData{types.BUG, -rand.Float32(), -rand.Float32(), 0.5, 0, 0, 100, weapon.CreateAWeapon(types.GUN), types.FLY}
 }

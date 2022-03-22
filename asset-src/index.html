@@ -24,6 +24,12 @@ license that can be found in the LICENSE file.
 	-->
 		<script src="wasm_exec.js"></script>
 		<script src="go_connector.js"></script>
+		<script>
+			async function runClickByMouse(e) {
+				console.log(e);
+				clickByMouse(e.offsetX, e.offsetY);
+			}
+		</script>
 		<canvas
 			id="canvas"
 			width="100"

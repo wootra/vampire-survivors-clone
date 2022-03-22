@@ -27,35 +27,25 @@
 			console.error(err);
 		});
 
-	async function runDrawInCanvas() {
-		drawInCanvas();
-	}
-
-	async function runClickByMouse(e) {
-		console.log(e);
-		clickByMouse(e.offsetX, e.offsetY);
-	}
-
-	async function runKeyDown(e) {
-		console.log(e);
-		keyDown();
-	}
-
-	async function runKeyUp(e) {
-		console.log(e);
-		keyUp();
-	}
 	var resizeTimerId = -1;
 	function resetCanvasSize() {
-		canvas.Width = window.innerWidth;
-		canvas.Height = window.innerHeight;
+		var canvas = document.querySelector('#canvas');
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		console.log('reset canvas size');
 		if (resizeTimerId >= 0) clearTimeout(resizeTimerId);
 		resizeTimerId = setTimeout(() => {
 			//in next rendering event when resizing is finished.
-			var canvas = document.querySelector('#canvas');
+			canvas = document.querySelector('#canvas');
+			console.log('set - canvas ');
 			setCanvas(window.innerWidth, window.innerHeight, {
 				getContext: () => {
 					return canvas.getContext('2d');
+				},
+				getBackground: () => {
+					const image = new Image();
+					image.src = './images/milky-way-g2aa80c0ab_640.jpeg';
+					return image;
 				},
 			});
 			resizeTimerId = -1;
@@ -68,6 +58,7 @@
 	});
 
 	window.addEventListener('DOMContentLoaded', event => {
+		console.log('dom is loaded...');
 		var intervalId = setInterval(() => {
 			if (window.InitFinished) {
 				resetCanvasSize();
