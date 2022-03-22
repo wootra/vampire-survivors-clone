@@ -15,10 +15,17 @@ func DrawInCanvas(data *types.Data) interface{} {
 	if data.Canvas.CanvasFuncs == nil {
 		return ""
 	}
+	data.Canvas.Restore()
 	xScale := float32(data.Canvas.Width) / 100
 	yScale := float32(data.Canvas.Height) / 100
 	var charSize float32 = 10
 	data.Canvas.GetContext().FillRect(data.Character.PosX*xScale-charSize/2, data.Character.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
+
+	for _, enemy := range data.Enemies {
+
+		data.Canvas.GetContext().FillRect(enemy.PosX*xScale-charSize/2, enemy.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
+	}
+
 	// fmt.Println("draw in canvas", data.Character.PosX*xScale, data.Character.PosY*yScale)
 	return ""
 }

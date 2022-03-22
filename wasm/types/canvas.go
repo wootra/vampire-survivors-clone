@@ -33,7 +33,14 @@ func (c *Canvas) DrawBackground() {
 	} else {
 		fmt.Println("background image is undefined")
 	}
+}
 
+func (c *Canvas) Restore() {
+	js.Value(c.Context).Call("restore")
+}
+
+func (c *Canvas) Save() {
+	js.Value(c.Context).Call("save")
 }
 
 func (c Canvas) GetContext() Context2D {

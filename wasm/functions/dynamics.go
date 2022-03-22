@@ -1,6 +1,9 @@
 package functions
 
 import (
+	"fmt"
+	"math"
+
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
 )
 
@@ -26,35 +29,48 @@ func KeyUp(data *types.Data) {
 	data.Character.MovementCode = types.STOP
 }
 
-func CalculateInATick(data *types.Data) interface{} {
-	speedY := data.Character.Speed
-	speedX := data.Character.Speed
+func CalculateHeroPos(character *types.CharacterData) {
+	speedY := character.Speed
+	speedX := character.Speed
 
-	switch data.Character.MovementCode {
+	switch character.MovementCode {
 	case types.DOWN:
-		data.Character.PosY += speedY
-		if data.Character.PosY > 100 {
-			data.Character.PosY = 100
+		character.PosY += speedY
+		if character.PosY > 100 {
+			character.PosY = 100
 		}
 		break
 	case types.UP:
-		data.Character.PosY -= speedY
-		if data.Character.PosY < 0 {
-			data.Character.PosY = 0
+		character.PosY -= speedY
+		if character.PosY < 0 {
+			character.PosY = 0
 		}
 		break
 	case types.RIGHT:
-		data.Character.PosX += speedX
-		if data.Character.PosX > 100 {
-			data.Character.PosX = 100
+		character.PosX += speedX
+		if character.PosX > 100 {
+			character.PosX = 100
 		}
 		break
 	case types.LEFT:
-		data.Character.PosX -= speedX
-		if data.Character.PosX < 0 {
-			data.Character.PosX = 0
+		character.PosX -= speedX
+		if character.PosX < 0 {
+			character.PosX = 0
 		}
 		break
 	}
-	return ""
+}
+
+func CalculateEnemyPos(character types.CharacterData, enemy *types.EnemyData) {
+
+	dirX := character.PosX - enemy.PosX
+	dirY := character.PosY - enemy.PosY
+
+	angle := math.Atan(float64(dirY / dirX))
+
+	enemy.PosX += enemy.Speed * float32(math.Cos(angle))
+	enemy.PosY += enemy.Speed * float32(math.Sin(angle))
+
+	fmt.Println(enemy.CharName, enemy.PosX, enemy.PosY, dirX, dirY, angle, enemy.Speed,
+		(enemy.Speed * float32(math.Cos(angle))), (enemy.Speed * float32(math.Sin(angle))))
 }

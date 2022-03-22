@@ -13,7 +13,11 @@ func main() {
 
 	gl := gameLoop.New(10, func(delta float64) {
 		// update values
-		funcs.CalculateInATick(&data)
+		funcs.CalculateHeroPos(&data.Character)
+		for _, enemy := range data.Enemies {
+			funcs.CalculateEnemyPos(data.Character, &enemy)
+		}
+
 	})
 
 	update := gameLoop.New(16, func(delta float64) {

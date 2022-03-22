@@ -37,6 +37,7 @@ func keyUpSync(data *types.Data, this js.Value, args []js.Value) interface{} {
 
 func setBackgroundSync(data *types.Data, this js.Value, args []js.Value) interface{} {
 	data.Canvas.Background = types.BitmapImage(args[0].Get("image"))
+	data.Canvas.Save()
 	return ""
 }
 
