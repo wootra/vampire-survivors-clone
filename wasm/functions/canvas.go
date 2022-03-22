@@ -5,67 +5,66 @@ import (
 	"syscall/js" //to fix the redline, refer .vscode/settings.json in this workspace
 )
 
-type Context2D interface {
-	clearRect()
-	fillRect()
-}
+type Context2D js.Value
 
-type Context2DJsValue js.Value
+type BitmapImage js.Value
 
 type Canvas struct {
-	width       int
-	height      int
-	init        bool
-	canvasFuncs *js.Value
-	context     Context2DJsValue
+	Width       int
+	Height      int
+	Init        bool
+	CanvasFuncs *js.Value
+	Context     Context2D
+	Background  BitmapImage
 }
 
-func (c Context2DJsValue) clearRect() {
+func (c Context2D) clearRect() {
 	js.Value(c).Call("clearRect")
 }
 
-func (c Context2DJsValue) fillRect(x, y, w, h float32, r, g, b, a uint8) {
+func (c Context2D) fillRect(x, y, w, h float32, r, g, b, a uint8) {
 	js.Value(c).Set("fillStyle", fmt.Sprintf("rgb(%d,%d,%d,%d)", r, g, b, a))
 	js.Value(c).Call("fillRect", x, y, w, h)
 }
 
-func (c Canvas) GetContext() Context2DJsValue {
-	if c.canvasFuncs != nil {
-		return c.context
+func (c Canvas) GetContext() Context2D {
+	if c.CanvasFuncs != nil {
+		return Context2D(c.Context)
 	}
-	return Context2DJsValue{}
+	return Context2D{}
 }
 
 func CreateNewCanvas() Canvas {
-	return Canvas{0, 0, false, nil, Context2DJsValue{}}
-}
-
-func SetCanvasFuncs(data *Data, this js.Value, args []js.Value) interface{} {
-
-	if data.canvas.width == 0 && data.canvas.height == 0 {
-		//when window size is initialized, set character's position
-		data.character.PosX = 50
-		data.character.PosY = 50
-	}
-	data.canvas.width = args[0].Int()
-	data.canvas.height = args[1].Int()
-	data.canvas.canvasFuncs = &args[2]
-	data.canvas.context = Context2DJsValue(data.canvas.canvasFuncs.Call("getContext"))
-	fmt.Printf("%T", data.canvas.context)
-	data.canvas.init = true
-
-	fmt.Println("width", data.canvas.width, "height", data.canvas.height)
-	return ""
+	return Canvas{0, 0, false, nil, Context2D{}, BitmapImage{}}
 }
 
 func DrawInCanvas(data *Data) interface{} {
-	if data.canvas.canvasFuncs == nil {
+	if data.Canvas.CanvasFuncs == nil {
 		return ""
 	}
-	xScale := float32(data.canvas.width) / 100
-	yScale := float32(data.canvas.height) / 100
+	xScale := float32(data.Canvas.Width) / 100
+	yScale := float32(data.Canvas.Height) / 100
 	var charSize float32 = 10
-	data.canvas.GetContext().fillRect(data.character.PosX*xScale-charSize/2, data.character.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
-	// fmt.Println("draw in canvas", data.character.PosX*xScale, data.character.PosY*yScale)
+	data.Canvas.GetContext().fillRect(data.Character.PosX*xScale-charSize/2, data.Character.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
+	// fmt.Println("draw in canvas", data.Character.PosX*xScale, data.Character.PosY*yScale)
 	return ""
+}
+
+func SetCanvas(data *Data, width, height int, funcs *js.Value) {
+
+	if data.Canvas.Width == 0 && data.Canvas.Height == 0 {
+		//when window size is initialized, set character's position
+		data.Character.PosX = 50
+		data.Character.PosY = 50
+	}
+	data.Canvas.Width = width
+	data.Canvas.Height = height
+	data.Canvas.CanvasFuncs = funcs
+	data.Canvas.Context = Context2D(data.Canvas.CanvasFuncs.Call("getContext"))
+
+	fmt.Printf("%T", data.Canvas.Context)
+	data.Canvas.Init = true
+	data.Canvas.Background = BitmapImage(data.Canvas.CanvasFuncs.Call("getBackground"))
+
+	fmt.Println("width", data.Canvas.Width, "height", data.Canvas.Height)
 }

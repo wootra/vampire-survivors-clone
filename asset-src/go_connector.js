@@ -11,7 +11,7 @@
 
 	const go = new Go();
 	let mod, inst;
-	window.initFinished = false;
+	window.InitFinished = false;
 	WebAssembly.instantiateStreaming(fetch('result.wasm'), go.importObject)
 		.then(async result => {
 			mod = result.module;
@@ -20,7 +20,7 @@
 
 			// document.getElementById('runButton').disabled = false;
 			console.clear();
-			window.initFinished = true;
+			window.InitFinished = true;
 			await go.run(inst);
 		})
 		.catch(err => {
@@ -47,8 +47,8 @@
 	}
 	var resizeTimerId = -1;
 	function resetCanvasSize() {
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
+		canvas.Width = window.innerWidth;
+		canvas.Height = window.innerHeight;
 		if (resizeTimerId >= 0) clearTimeout(resizeTimerId);
 		resizeTimerId = setTimeout(() => {
 			//in next rendering event when resizing is finished.
@@ -69,7 +69,7 @@
 
 	window.addEventListener('DOMContentLoaded', event => {
 		var intervalId = setInterval(() => {
-			if (window.initFinished) {
+			if (window.InitFinished) {
 				resetCanvasSize();
 				clearInterval(intervalId);
 			} else {

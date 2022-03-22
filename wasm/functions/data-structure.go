@@ -7,21 +7,21 @@ import (
 )
 
 type Data struct {
-	canvas    Canvas
-	character Chars.CharacterData
-	enemies   []Chars.EnemyData
+	Canvas    Canvas
+	Character Chars.CharacterData
+	Enemies   []Chars.EnemyData
 }
 
 func (data *Data) AddAnEnemy(enemy ...Chars.EnemyData) {
-	data.enemies = append(data.enemies, enemy...)
+	data.Enemies = append(data.Enemies, enemy...)
 }
 
 func (data *Data) AddAnEnemies(enemies []Chars.EnemyData) {
-	data.enemies = append(data.enemies, enemies...)
+	data.Enemies = append(data.Enemies, enemies...)
 }
 
 func SetCharacterData(data *Data, charData Chars.CharacterData) {
-	data.character = charData
+	data.Character = charData
 }
 
 func SetCharacterDataJs(data *Data, this js.Value, args []js.Value) interface{} {
