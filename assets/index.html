@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!--
+Copyright 2018 The Go Authors. All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+-->
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Go wasm</title>
+		<style>
+			body {
+				margin: 0;
+				box-sizing: border-box;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--
+	Add the following polyfill for Microsoft Edge 17/18 support:
+	<script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script>
+	(see https://caniuse.com/#feat=textencoder)
+	-->
+		<script src="wasm_exec.js"></script>
+		<script src="go_connector.js"></script>
+
+		<!-- <button onClick="run();" id="runButton" disabled>Run</button> -->
+		<button onClick="runKeyDown();">runKeyDown</button>
+		<button onClick="runKeyUp();">runKeyUp</button>
+		<button onClick="runDrawInCanvas();">runDrawInCanvas</button>
+		<button onClick="runClickByMouse(event);">runClickByMouse</button>
+		<br />
+		<canvas
+			id="canvas"
+			width="100"
+			height="100"
+			style="outline: 1px solid black"
+			onClick="runClickByMouse(event)"
+		></canvas>
+	</body>
+</html>
