@@ -28,6 +28,19 @@
 		});
 
 	var resizeTimerId = -1;
+	const imageSet = {};
+
+	function loadImages() {
+		const image = new Image();
+
+		image.src = `./images/back-1.jpeg`; //later, it will be changed to imagesets
+
+		image.addEventListener('load', () => {
+			imageSet['back-1'] = image;
+		});
+	}
+	loadImages();
+
 	function resetCanvasSize() {
 		var canvas = document.querySelector('#canvas');
 		canvas.width = window.innerWidth;
@@ -40,6 +53,11 @@
 			const ctx = canvas.getContext('2d');
 			const halfW = window.innerWidth / 2;
 			const halfH = window.innerHeight / 2;
+			document.createElement('canvas', {
+				width: window.innerWidth,
+				height: window.innerHeight,
+			});
+
 			ctx.translate(halfW, halfH);
 			console.log('set - canvas ');
 			setCanvas(window.innerWidth, window.innerHeight, {
@@ -48,33 +66,21 @@
 					return ctx;
 				},
 				getBackground: fileName => {
-					const image = new Image();
-					console.log('drawing back:', fileName);
-					image.src = `./images/${fileName}.jpeg`;
-
 					const ctx = canvas.getContext('2d');
-					image.addEventListener('load', () => {
-						console.log(image);
-						setBackground({ image });
-						// ctx.translate(halfW, halfH);
-						ctx.drawImage(
-							image,
-							0,
-							0,
-							image.naturalWidth,
-							image.naturalHeight,
-							-halfW,
-							-halfH,
-							window.innerWidth,
-							window.innerHeight
-						);
-					});
-					// image.onload = img => {
-
-					// 	ctx.drawImage(image, 0, 0, 100, 100);
-					// };
-
-					return image;
+					const img = imageSet[fileName];
+					setBackground({ image: img });
+					ctx.drawImage(
+						img,
+						0,
+						0,
+						img.naturalWidth,
+						img.naturalHeight,
+						-halfW,
+						-halfH,
+						window.innerWidth,
+						window.innerHeight
+					);
+					return img;
 				},
 			});
 			resizeTimerId = -1;

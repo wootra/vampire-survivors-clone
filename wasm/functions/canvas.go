@@ -15,6 +15,9 @@ func DrawInCanvas(data *types.Data) interface{} {
 		return ""
 	}
 	data.Canvas.Restore()
+
+	data.Canvas.CanvasFuncs.Call("getBackground", "back-1")
+
 	xScale := float32(data.Canvas.Width) / 100
 	yScale := float32(data.Canvas.Height) / 100
 	var charSize float32 = 10

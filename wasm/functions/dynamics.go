@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
@@ -60,7 +59,7 @@ func CalculateHeroPos(character *types.CharacterData) {
 		break
 	}
 
-	fmt.Println("hero movement:", character.PosX, character.PosY, speedX, speedY)
+	// fmt.Println("hero movement:", character.PosX, character.PosY, speedX, speedY)
 }
 
 func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {
