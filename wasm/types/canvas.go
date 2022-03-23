@@ -27,6 +27,10 @@ func (c Context2D) FillRect(x, y, w, h float32, r, g, b, a uint8) {
 	js.Value(c).Call("fillRect", x, y, w, h)
 }
 
+func (c Context2D) Translate(dx, dy int) {
+	js.Value(c).Call("translate", dx, dy)
+}
+
 func (c *Canvas) DrawBackground() {
 	if !js.Value(c.Background).IsUndefined() {
 		js.Value(c.Context).Call("drawImage", c.Background, 20, 20, 185, 175, 50, 50, 185, 175)
@@ -35,11 +39,11 @@ func (c *Canvas) DrawBackground() {
 	}
 }
 
-func (c *Canvas) Restore() {
+func (c Canvas) Restore() {
 	js.Value(c.Context).Call("restore")
 }
 
-func (c *Canvas) Save() {
+func (c Canvas) Save() {
 	js.Value(c.Context).Call("save")
 }
 

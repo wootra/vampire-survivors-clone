@@ -51,5 +51,6 @@ func InitEvents(data *types.Data) {
 }
 
 func InitCharacters(data *types.Data) {
-	data.AddAnEnemy(characters.CreateNewEnemyData(types.BAT))
+	data.Character = characters.CreateNewCharacterData()
+	data.AddAnEnemy(characters.CreateNewEnemyData(data, types.BAT))
 }

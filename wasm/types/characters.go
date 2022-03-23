@@ -26,6 +26,16 @@ const (
 	BUG EnemyName = "BUG"
 )
 
+type EnemyStatus int
+
+const (
+	IDLE    EnemyStatus = 0
+	MOVED   EnemyStatus = 1
+	BLOCKED EnemyStatus = 2
+	DIED    EnemyStatus = 3
+	HIT     EnemyStatus = 4
+)
+
 type CharacterData struct {
 	PosX, PosY, Speed, Shield, Armor, Life float32
 	Weapon                                 Weapon
@@ -37,4 +47,5 @@ type EnemyData struct {
 	PosX, PosY, Speed, Shield, Armor, Life float32
 	Weapon                                 Weapon
 	SwormType                              SwormType
+	Status                                 EnemyStatus
 }

@@ -8,7 +8,6 @@ import (
 )
 
 func KeyDown(data *types.Data, keyCode string) {
-
 	switch keyCode {
 	case "ArrowDown":
 		data.Character.MovementCode = types.DOWN
@@ -23,6 +22,7 @@ func KeyDown(data *types.Data, keyCode string) {
 		data.Character.MovementCode = types.RIGHT
 		break
 	}
+
 }
 
 func KeyUp(data *types.Data) {
@@ -36,41 +36,40 @@ func CalculateHeroPos(character *types.CharacterData) {
 	switch character.MovementCode {
 	case types.DOWN:
 		character.PosY += speedY
-		if character.PosY > 100 {
-			character.PosY = 100
+		if character.PosY > 50 {
+			character.PosY = 50
 		}
 		break
 	case types.UP:
 		character.PosY -= speedY
-		if character.PosY < 0 {
-			character.PosY = 0
+		if character.PosY < -50 {
+			character.PosY = -50
 		}
 		break
 	case types.RIGHT:
 		character.PosX += speedX
-		if character.PosX > 100 {
-			character.PosX = 100
+		if character.PosX > 50 {
+			character.PosX = 50
 		}
 		break
 	case types.LEFT:
 		character.PosX -= speedX
-		if character.PosX < 0 {
-			character.PosX = 0
+		if character.PosX < -50 {
+			character.PosX = -50
 		}
 		break
 	}
+
+	fmt.Println("hero movement:", character.PosX, character.PosY, speedX, speedY)
 }
 
-func CalculateEnemyPos(character types.CharacterData, enemy *types.EnemyData) {
+func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {
 
-	dirX := character.PosX - enemy.PosX
-	dirY := character.PosY - enemy.PosY
+	dirX := float64(character.PosX - enemy.PosX)
+	dirY := float64(character.PosY - enemy.PosY)
 
-	angle := math.Atan(float64(dirY / dirX))
+	r := math.Sqrt(dirX*dirX + dirY*dirY)
 
-	enemy.PosX += enemy.Speed * float32(math.Cos(angle))
-	enemy.PosY += enemy.Speed * float32(math.Sin(angle))
-
-	fmt.Println(enemy.CharName, enemy.PosX, enemy.PosY, dirX, dirY, angle, enemy.Speed,
-		(enemy.Speed * float32(math.Cos(angle))), (enemy.Speed * float32(math.Sin(angle))))
+	enemy.PosX = enemy.PosX + enemy.Speed*float32(dirX/r)
+	enemy.PosY = enemy.PosY + enemy.Speed*float32(dirY/r)
 }

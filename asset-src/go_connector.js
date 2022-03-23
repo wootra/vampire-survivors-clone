@@ -37,10 +37,15 @@
 		resizeTimerId = setTimeout(() => {
 			//in next rendering event when resizing is finished.
 			canvas = document.querySelector('#canvas');
+			const ctx = canvas.getContext('2d');
+			const halfW = window.innerWidth / 2;
+			const halfH = window.innerHeight / 2;
+			ctx.translate(halfW, halfH);
 			console.log('set - canvas ');
 			setCanvas(window.innerWidth, window.innerHeight, {
 				getContext: () => {
-					return canvas.getContext('2d');
+					const ctx = canvas.getContext('2d');
+					return ctx;
 				},
 				getBackground: fileName => {
 					const image = new Image();
@@ -51,14 +56,15 @@
 					image.addEventListener('load', () => {
 						console.log(image);
 						setBackground({ image });
+						// ctx.translate(halfW, halfH);
 						ctx.drawImage(
 							image,
 							0,
 							0,
 							image.naturalWidth,
 							image.naturalHeight,
-							0,
-							0,
+							-halfW,
+							-halfH,
 							window.innerWidth,
 							window.innerHeight
 						);
