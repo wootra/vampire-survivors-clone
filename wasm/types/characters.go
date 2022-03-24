@@ -35,10 +35,12 @@ const (
 
 type CharacterData struct {
 	PosX, PosY, Speed, Shield, Armor, Life float32
+	SpeedAdjust                            float32
 	FrameIndex                             int
 	FrameOffset                            int
 	Weapon                                 Weapon
 	MovementCode                           MovementType
+	ImageKey                               string
 }
 
 func (c *CharacterData) Stop() {
@@ -51,8 +53,12 @@ func (c *CharacterData) Stop() {
 type EnemyData struct {
 	CharName                               EnemyName
 	PosX, PosY, Speed, Shield, Armor, Life float32
+	SpeedAdjustX                           float32
+	SpeedAdjustY                           float32
 	FrameIndex                             int
 	Weapon                                 Weapon
 	SwormType                              SwormType
 	Status                                 EnemyStatus
+	ImageKey                               string
+	Direction                              float32
 }

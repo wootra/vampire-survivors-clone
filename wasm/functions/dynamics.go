@@ -1,28 +1,42 @@
 package functions
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
 )
 
+func AdjustSpeed(isDiagonal bool, character *types.CharacterData) {
+	if isDiagonal {
+		character.SpeedAdjust = 0.7 // 1/1.414 since it is diagnonal movement
+	} else {
+		character.SpeedAdjust = 1
+	}
+}
+
 func KeyDown(data *types.Data, keyCode string) {
+	movement := &data.Character.MovementCode
 	switch keyCode {
 	case "ArrowDown":
-		data.Character.MovementCode.Down = true
-		data.Character.MovementCode.Up = false
+		movement.Down = true
+		movement.Up = false
+		AdjustSpeed(movement.Left || movement.Right, data.Character)
 		break
 	case "ArrowUp":
-		data.Character.MovementCode.Up = true
-		data.Character.MovementCode.Down = false
+		movement.Up = true
+		movement.Down = false
+		AdjustSpeed(movement.Left || movement.Right, data.Character)
 		break
 	case "ArrowLeft":
-		data.Character.MovementCode.Left = true
-		data.Character.MovementCode.Right = false
+		movement.Left = true
+		movement.Right = false
+		AdjustSpeed(movement.Up || movement.Down, data.Character)
 		break
 	case "ArrowRight":
-		data.Character.MovementCode.Right = true
-		data.Character.MovementCode.Left = false
+		movement.Right = true
+		movement.Left = false
+		AdjustSpeed(movement.Up || movement.Down, data.Character)
 		break
 	}
 	data.Character.FrameOffset++
@@ -46,8 +60,8 @@ func KeyUp(data *types.Data, keyCode string) {
 }
 
 func CalculateHeroPos(character *types.CharacterData) {
-	speedY := character.Speed
-	speedX := character.Speed
+	speedY := character.Speed * character.SpeedAdjust
+	speedX := character.Speed * character.SpeedAdjust
 
 	move := character.MovementCode
 
@@ -85,4 +99,6 @@ func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {
 
 	enemy.PosX = enemy.PosX + enemy.Speed*float32(dirX/r)
 	enemy.PosY = enemy.PosY + enemy.Speed*float32(dirY/r)
+	enemy.Direction = float32(math.Atan(dirY/dirX) * 180 / math.Pi)
+	fmt.Println(math.Atan(dirY/dirX), enemy.Direction)
 }

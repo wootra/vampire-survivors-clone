@@ -40,12 +40,13 @@ func DrawInCanvas(data *types.Data) {
 	// data.Canvas.GetContext().FillRect(data.Character.PosX*xScale-charSize/2, data.Character.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
 	characters.DrawCharacter(data, xScale, yScale, charSize)
 
-	for _, enemy := range data.Enemies {
-		if enemy.Status == types.MOVED {
-			data.Canvas.CanvasFuncs.Call("getCharacterImage", "cat", enemy.FrameIndex, enemy.PosX*xScale-charSize/2, enemy.PosY*yScale-charSize/2, charSize, charSize)
-		} else if enemy.Status == types.IDLE {
-			data.Canvas.CanvasFuncs.Call("getCharacterImage", "cat", enemy.FrameIndex, enemy.PosX*xScale-charSize/2, enemy.PosY*yScale-charSize/2, charSize, charSize)
-		}
+	for enemyNo := range data.Enemies {
+		characters.DrawEnemy(data, enemyNo, xScale, yScale, charSize)
+		// if enemy.Status == types.MOVED {
+		// 	data.Canvas.CanvasFuncs.Call("getCharacterImage", "cat", enemy.FrameIndex, enemy.PosX*xScale-charSize/2, enemy.PosY*yScale-charSize/2, charSize, charSize)
+		// } else if enemy.Status == types.IDLE {
+		// 	data.Canvas.CanvasFuncs.Call("getCharacterImage", "cat", enemy.FrameIndex, enemy.PosX*xScale-charSize/2, enemy.PosY*yScale-charSize/2, charSize, charSize)
+		// }
 	}
 
 	// fmt.Println("draw in canvas", data.Character.PosX*xScale, data.Character.PosY*yScale)
