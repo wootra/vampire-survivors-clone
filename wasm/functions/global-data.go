@@ -6,7 +6,9 @@ import (
 
 func CreateNewData() *types.Data {
 	return &types.Data{
-		Canvas:    CreateNewCanvas(),
-		Character: &types.CharacterData{},
-		Enemies:   []*types.EnemyData{}}
+		Canvas:        CreateNewCanvas(),
+		Character:     &types.CharacterData{},
+		Enemies:       []*types.EnemyData{},
+		GlueFunctions: nil,
+	}
 }

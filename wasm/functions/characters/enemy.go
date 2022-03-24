@@ -58,15 +58,16 @@ func CreateNewEnemyData(data *types.Data, CharName types.EnemyName) *types.Enemy
 		Weapon = weapon.CreateAWeapon(types.GUN)
 	}
 	return &types.EnemyData{
-		CharName:  CharName,
-		PosX:      PosX,
-		PosY:      PosY,
-		Speed:     Speed,
-		Shield:    Shield,
-		Armor:     Armor,
-		Life:      Life,
-		Weapon:    Weapon,
-		SwormType: SwormType,
-		Status:    Status,
+		CharName:   CharName,
+		PosX:       PosX,
+		PosY:       PosY,
+		Speed:      Speed,
+		Shield:     Shield,
+		FrameIndex: 0,
+		Armor:      Armor,
+		Life:       Life,
+		Weapon:     Weapon,
+		SwormType:  SwormType,
+		Status:     Status,
 	}
 }

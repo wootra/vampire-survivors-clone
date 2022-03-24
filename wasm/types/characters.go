@@ -38,6 +38,8 @@ const (
 
 type CharacterData struct {
 	PosX, PosY, Speed, Shield, Armor, Life float32
+	FrameIndex                             int
+	FrameOffset                            int
 	Weapon                                 Weapon
 	MovementCode                           MovementType
 }
@@ -45,6 +47,7 @@ type CharacterData struct {
 type EnemyData struct {
 	CharName                               EnemyName
 	PosX, PosY, Speed, Shield, Armor, Life float32
+	FrameIndex                             int
 	Weapon                                 Weapon
 	SwormType                              SwormType
 	Status                                 EnemyStatus

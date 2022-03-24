@@ -10,6 +10,31 @@
 	}
 
 	const go = new Go();
+	const imageSet = {};
+	const images = {
+		'back-1': 'back-1.jpeg',
+		fish: 'fish.png',
+		cat: 'cats.png',
+	};
+	const loadedImages = {
+		loaded: 0,
+		total: Object.keys(images).length,
+	};
+
+	function loadImages() {
+		Object.keys(images).forEach(key => {
+			const image = new Image();
+
+			image.src = `./images/${images[key]}`; //later, it will be changed to imagesets
+
+			image.addEventListener('load', () => {
+				imageSet[key] = image;
+				loadedImages.loaded++;
+			});
+		});
+	}
+	loadImages();
+
 	let mod, inst;
 	window.InitFinished = false;
 	WebAssembly.instantiateStreaming(fetch('result.wasm'), go.importObject)
@@ -19,32 +44,26 @@
 			inst = await WebAssembly.instantiate(mod, go.importObject); // reset instance
 
 			// document.getElementById('runButton').disabled = false;
-			console.clear();
+			// console.clear();
 			window.InitFinished = true;
 			await go.run(inst);
+			setGlueFunctions({
+				getLoadStatus: () => {
+					return loadedImages;
+				},
+			});
 		})
 		.catch(err => {
 			console.error(err);
 		});
 
 	var resizeTimerId = -1;
-	const imageSet = {};
-
-	function loadImages() {
-		const image = new Image();
-
-		image.src = `./images/back-1.jpeg`; //later, it will be changed to imagesets
-
-		image.addEventListener('load', () => {
-			imageSet['back-1'] = image;
-		});
-	}
-	loadImages();
 
 	function resetCanvasSize() {
 		var canvas = document.querySelector('#canvas');
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
+
 		console.log('reset canvas size');
 		if (resizeTimerId >= 0) clearTimeout(resizeTimerId);
 		resizeTimerId = setTimeout(() => {
@@ -65,8 +84,8 @@
 					const ctx = canvas.getContext('2d');
 					return ctx;
 				},
+
 				getBackground: fileName => {
-					const ctx = canvas.getContext('2d');
 					const img = imageSet[fileName];
 					setBackground({ image: img });
 					ctx.drawImage(
@@ -79,6 +98,22 @@
 						-halfH,
 						window.innerWidth,
 						window.innerHeight
+					);
+					return img;
+				},
+				getCharacterImage: (fileName, frame, x, y, size) => {
+					const img = imageSet[fileName];
+					const xd = img.naturalHeight * frame;
+					ctx.drawImage(
+						img,
+						xd,
+						0,
+						img.naturalHeight,
+						img.naturalHeight,
+						x,
+						y,
+						size,
+						size
 					);
 					return img;
 				},
@@ -98,6 +133,11 @@
 			if (window.InitFinished) {
 				resetCanvasSize();
 				clearInterval(intervalId);
+				setGlueFunctions({
+					getLoadStatus: () => {
+						return loadedImages;
+					},
+				});
 			} else {
 				console.log('interval...');
 			}

@@ -11,6 +11,8 @@ func CreateNewCharacterData() *types.CharacterData {
 		PosY:         0,
 		Speed:        5,
 		Shield:       0,
+		FrameIndex:   0,
+		FrameOffset:  0,
 		Armor:        0,
 		Life:         100,
 		Weapon:       weapon.CreateAWeapon(types.GUN),

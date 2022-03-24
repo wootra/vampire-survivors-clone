@@ -21,7 +21,7 @@ func KeyDown(data *types.Data, keyCode string) {
 		data.Character.MovementCode = types.RIGHT
 		break
 	}
-
+	data.Character.FrameOffset++
 }
 
 func KeyUp(data *types.Data) {
