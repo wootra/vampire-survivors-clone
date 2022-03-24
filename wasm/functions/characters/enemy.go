@@ -1,6 +1,7 @@
 package characters
 
 import (
+	"fmt"
 	"math/rand"
 
 	//to fix the redline, refer .vscode/settings.json in this workspace
@@ -9,12 +10,12 @@ import (
 )
 
 func CreateNewEnemyData(data *types.Data, CharName types.EnemyName) *types.EnemyData {
-	rand.Seed(100)
-	PosX := rand.Float32() - 50
-	PosY := rand.Float32() - 50
 
-	rand.Seed(256) // probability will be distributed more
-	dir := rand.Int() % 8
+	PosX := rand.Float32()*100 - 50
+	PosY := rand.Float32()*100 - 50
+
+	dir := rand.Intn(256) % 8 // probability will be distributed more
+	fmt.Println("enemy is added at:", PosX, PosY, "dir:", dir)
 	if dir == 0 { // left-top
 		PosX -= 100
 		PosY -= 100

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math/rand"
+
 	gameLoop "github.com/kutase/go-gameloop"
 	funcs "github.com/wootra/vampire-survivors-clone/wasm/functions"
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
@@ -11,6 +13,7 @@ var loadImageLoop *gameLoop.GameLoop = nil
 
 func main() {
 	var data *types.Data = funcs.CreateNewData()
+	rand.Seed(100)
 	funcs.InitCharacters(data)
 	funcs.InitEvents(data)
 
