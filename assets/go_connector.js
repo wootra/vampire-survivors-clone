@@ -150,6 +150,6 @@
 	});
 	window.addEventListener('keyup', async event => {
 		// console.log(event.code);
-		keyUp(event);
+		keyUp(event.code);
 	});
 })();

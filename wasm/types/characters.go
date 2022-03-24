@@ -1,14 +1,11 @@
 package types
 
-type MovementType int64
-
-const (
-	STOP  MovementType = 0
-	LEFT  MovementType = 1
-	UP    MovementType = 2
-	RIGHT MovementType = 3
-	DOWN  MovementType = 4
-)
+type MovementType struct {
+	Up    bool
+	Left  bool
+	Right bool
+	Down  bool
+}
 
 type SwormType int64
 
@@ -42,6 +39,13 @@ type CharacterData struct {
 	FrameOffset                            int
 	Weapon                                 Weapon
 	MovementCode                           MovementType
+}
+
+func (c *CharacterData) Stop() {
+	c.MovementCode.Left = false
+	c.MovementCode.Up = false
+	c.MovementCode.Right = false
+	c.MovementCode.Down = false
 }
 
 type EnemyData struct {

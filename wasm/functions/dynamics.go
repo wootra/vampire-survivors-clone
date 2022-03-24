@@ -9,57 +9,71 @@ import (
 func KeyDown(data *types.Data, keyCode string) {
 	switch keyCode {
 	case "ArrowDown":
-		data.Character.MovementCode = types.DOWN
+		data.Character.MovementCode.Down = true
+		data.Character.MovementCode.Up = false
 		break
 	case "ArrowUp":
-		data.Character.MovementCode = types.UP
+		data.Character.MovementCode.Up = true
+		data.Character.MovementCode.Down = false
 		break
 	case "ArrowLeft":
-		data.Character.MovementCode = types.LEFT
+		data.Character.MovementCode.Left = true
+		data.Character.MovementCode.Right = false
 		break
 	case "ArrowRight":
-		data.Character.MovementCode = types.RIGHT
+		data.Character.MovementCode.Right = true
+		data.Character.MovementCode.Left = false
 		break
 	}
 	data.Character.FrameOffset++
 }
 
-func KeyUp(data *types.Data) {
-	data.Character.MovementCode = types.STOP
+func KeyUp(data *types.Data, keyCode string) {
+	switch keyCode {
+	case "ArrowDown":
+		data.Character.MovementCode.Down = false
+		break
+	case "ArrowUp":
+		data.Character.MovementCode.Up = false
+		break
+	case "ArrowLeft":
+		data.Character.MovementCode.Left = false
+		break
+	case "ArrowRight":
+		data.Character.MovementCode.Right = false
+		break
+	}
 }
 
 func CalculateHeroPos(character *types.CharacterData) {
 	speedY := character.Speed
 	speedX := character.Speed
 
-	switch character.MovementCode {
-	case types.DOWN:
+	move := character.MovementCode
+
+	if move.Down {
 		character.PosY += speedY
 		if character.PosY > 50 {
 			character.PosY = 50
 		}
-		break
-	case types.UP:
+	} else if move.Up {
 		character.PosY -= speedY
 		if character.PosY < -50 {
 			character.PosY = -50
 		}
-		break
-	case types.RIGHT:
+	}
+
+	if move.Right {
 		character.PosX += speedX
 		if character.PosX > 50 {
 			character.PosX = 50
 		}
-		break
-	case types.LEFT:
+	} else if move.Left {
 		character.PosX -= speedX
 		if character.PosX < -50 {
 			character.PosX = -50
 		}
-		break
 	}
-
-	// fmt.Println("hero movement:", character.PosX, character.PosY, speedX, speedY)
 }
 
 func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {

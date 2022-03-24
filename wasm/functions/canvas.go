@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"syscall/js" //to fix the redline, refer .vscode/settings.json in this workspace
 
+	"github.com/wootra/vampire-survivors-clone/wasm/functions/characters"
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
 )
 
@@ -25,24 +26,19 @@ func CheckIfImageLoaded(data *types.Data) bool {
 	return true
 }
 
-func drawCharacter() {
-
-}
-
 func DrawInCanvas(data *types.Data) {
 	if data.Canvas.CanvasFuncs == nil {
 		return
 	}
-
-	data.Canvas.Restore()
 
 	data.Canvas.CanvasFuncs.Call("getBackground", "back-1")
 
 	xScale := float32(data.Canvas.Width) / 100
 	yScale := float32(data.Canvas.Height) / 100
 	var charSize float32 = 10 * xScale
-	data.Canvas.CanvasFuncs.Call("getCharacterImage", "fish", data.Character.FrameIndex, data.Character.PosX*xScale-charSize/2, data.Character.PosY*yScale-charSize/2, charSize, charSize)
+
 	// data.Canvas.GetContext().FillRect(data.Character.PosX*xScale-charSize/2, data.Character.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
+	characters.DrawCharacter(data, xScale, yScale, charSize)
 
 	for _, enemy := range data.Enemies {
 		if enemy.Status == types.MOVED {

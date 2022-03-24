@@ -32,19 +32,18 @@ func clickByMouseSync(data *types.Data, this js.Value, args []js.Value) interfac
 }
 
 func keyDownSync(data *types.Data, this js.Value, args []js.Value) interface{} {
-	code := args[0].String()
-	KeyDown(data, code)
+	KeyDown(data, args[0].String())
 	return ""
 }
 
 func keyUpSync(data *types.Data, this js.Value, args []js.Value) interface{} {
-	KeyUp(data)
+	KeyUp(data, args[0].String())
 	return ""
 }
 
 func setBackgroundSync(data *types.Data, this js.Value, args []js.Value) interface{} {
 	data.Canvas.Background = types.BitmapImage(args[0].Get("image"))
-	data.Canvas.Save()
+	// data.Canvas.Save()
 	return ""
 }
 

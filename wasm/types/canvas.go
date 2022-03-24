@@ -31,6 +31,18 @@ func (c Context2D) Translate(dx, dy int) {
 	js.Value(c).Call("translate", dx, dy)
 }
 
+func (c Context2D) Scale(dx, dy float32) {
+	js.Value(c).Call("scale", dx, dy)
+}
+
+func (ctx Context2D) Transform(a, b, c, d, e, f float32) {
+	js.Value(ctx).Call("transform", a, b, c, d, e, f)
+}
+
+func (ctx Context2D) Rotate(angle float32) {
+	js.Value(ctx).Call("rotate", angle)
+}
+
 func (c *Canvas) DrawBackground() {
 	if !js.Value(c.Background).IsUndefined() {
 		js.Value(c.Context).Call("drawImage", c.Background, 20, 20, 185, 175, 50, 50, 185, 175)
