@@ -111,6 +111,14 @@ func CalculateHeroPos(character *types.CharacterData) {
 	}
 }
 
+func ternary(test bool, a, b float32) float32 {
+	if test {
+		return a
+	} else {
+		return b
+	}
+}
+
 func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {
 
 	dirX := float64(character.PosX - enemy.PosX)
@@ -120,6 +128,9 @@ func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {
 
 	enemy.PosX = enemy.PosX + enemy.Speed*float32(dirX/r)
 	enemy.PosY = enemy.PosY + enemy.Speed*float32(dirY/r)
-	enemy.Direction = float32(math.Atan2(dirY, dirX) * 180 / math.Pi)
+	if dirX > 0 {
+		enemy.Direction = 1
+	}
+	enemy.Direction = ternary(dirX > 0, 1, -1)
 	// fmt.Println(math.Atan(dirY/dirX), enemy.Direction)
 }

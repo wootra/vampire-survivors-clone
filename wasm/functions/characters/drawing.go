@@ -41,7 +41,7 @@ func DrawEnemy(data *types.Data, enemyNo int, xScale, yScale, charSize float32) 
 	enemy := data.Enemies[enemyNo]
 
 	data.Canvas.Context.Translate(int(enemy.PosX*xScale), int(enemy.PosY*yScale))
-	data.Canvas.Context.Rotate(enemy.Direction)
+	// data.Canvas.Context.Rotate(enemy.Direction)
 	// if enemy.Direction > 90 && enemy.Direction < 270 {
 	// 	data.Canvas.Context.Scale(-1, 1)
 	// 	data.Canvas.Context.Rotate(enemy.Direction - 90)
@@ -50,7 +50,7 @@ func DrawEnemy(data *types.Data, enemyNo int, xScale, yScale, charSize float32) 
 	// }
 
 	data.Canvas.CanvasFuncs.Call("getCharacterImage", "cat", enemy.FrameIndex, -charSize/2, -charSize/2, charSize, charSize)
-	data.Canvas.Context.Rotate(-enemy.Direction)
+	data.Canvas.Context.Scale(enemy.Direction, 1)
 	// data.Canvas.GetContext().FillRect(enemy.PosX*xScale-charSize/2, enemy.PosY*yScale-charSize/2, charSize, charSize, 255, 0, 0, 255)
 	// data.Canvas.CanvasFuncs.Call("getCharacterImage", "fish", enemy.FrameIndex, -charSize/2, -charSize/2, charSize, charSize)
 	data.Canvas.Restore()
