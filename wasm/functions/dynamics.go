@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
@@ -17,27 +16,49 @@ func AdjustSpeed(isDiagonal bool, character *types.CharacterData) {
 
 func KeyDown(data *types.Data, keyCode string) {
 	movement := &data.Character.MovementCode
+	lastMove := &data.Character.LastMovement
 	switch keyCode {
 	case "ArrowDown":
 		movement.Down = true
 		movement.Up = false
+		lastMove.Down = true
+		lastMove.Up = false
 		AdjustSpeed(movement.Left || movement.Right, data.Character)
 		break
 	case "ArrowUp":
 		movement.Up = true
 		movement.Down = false
+		lastMove.Up = true
+		lastMove.Down = false
 		AdjustSpeed(movement.Left || movement.Right, data.Character)
 		break
 	case "ArrowLeft":
 		movement.Left = true
 		movement.Right = false
+		lastMove.Left = true
+		lastMove.Right = false
 		AdjustSpeed(movement.Up || movement.Down, data.Character)
 		break
 	case "ArrowRight":
 		movement.Right = true
 		movement.Left = false
+		lastMove.Right = true
+		lastMove.Left = false
 		AdjustSpeed(movement.Up || movement.Down, data.Character)
 		break
+	}
+
+	if !movement.Right {
+		lastMove.Right = false
+	}
+	if !movement.Left {
+		lastMove.Left = false
+	}
+	if !movement.Up {
+		lastMove.Up = false
+	}
+	if !movement.Down {
+		lastMove.Down = false
 	}
 	data.Character.FrameOffset++
 }
@@ -99,6 +120,6 @@ func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {
 
 	enemy.PosX = enemy.PosX + enemy.Speed*float32(dirX/r)
 	enemy.PosY = enemy.PosY + enemy.Speed*float32(dirY/r)
-	enemy.Direction = float32(math.Atan(dirY/dirX) * 180 / math.Pi)
-	fmt.Println(math.Atan(dirY/dirX), enemy.Direction)
+	enemy.Direction = float32(math.Atan2(dirY, dirX) * 180 / math.Pi)
+	// fmt.Println(math.Atan(dirY/dirX), enemy.Direction)
 }

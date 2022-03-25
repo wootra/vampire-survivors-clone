@@ -2,9 +2,9 @@ package types
 
 type MovementType struct {
 	Up    bool
-	Left  bool
 	Right bool
 	Down  bool
+	Left  bool
 }
 
 type SwormType int64
@@ -40,6 +40,7 @@ type CharacterData struct {
 	FrameOffset                            int
 	Weapon                                 Weapon
 	MovementCode                           MovementType
+	LastMovement                           MovementType
 	ImageKey                               string
 }
 

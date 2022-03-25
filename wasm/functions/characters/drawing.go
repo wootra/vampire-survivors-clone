@@ -6,26 +6,26 @@ func DrawCharacter(data *types.Data, xScale, yScale, charSize float32) {
 
 	data.Canvas.Save()
 	data.Canvas.Context.Translate(int(data.Character.PosX*xScale), int(data.Character.PosY*yScale))
-	if data.Character.MovementCode.Up {
-		if data.Character.MovementCode.Left {
+	if data.Character.LastMovement.Up || data.Character.MovementCode.Up {
+		if data.Character.LastMovement.Left || data.Character.MovementCode.Left {
 			data.Canvas.Context.Rotate(45)
-		} else if data.Character.MovementCode.Right {
+		} else if data.Character.LastMovement.Right || data.Character.MovementCode.Right {
 			data.Canvas.Context.Scale(-1, 1)
 			data.Canvas.Context.Rotate(45)
 		} else {
 			data.Canvas.Context.Rotate(90)
 		}
-	} else if data.Character.MovementCode.Down {
-		if data.Character.MovementCode.Left {
+	} else if data.Character.LastMovement.Down || data.Character.MovementCode.Down {
+		if data.Character.LastMovement.Left {
 			data.Canvas.Context.Rotate(-45)
-		} else if data.Character.MovementCode.Right {
+		} else if data.Character.LastMovement.Right || data.Character.MovementCode.Right {
 			data.Canvas.Context.Scale(-1, 1)
 			data.Canvas.Context.Rotate(-45)
 		} else {
 			data.Canvas.Context.Scale(-1, 1)
 			data.Canvas.Context.Rotate(-90)
 		}
-	} else if data.Character.MovementCode.Right {
+	} else if data.Character.LastMovement.Right || data.Character.MovementCode.Right {
 		data.Canvas.Context.Scale(-1, 1)
 	} //left doesn't need transform
 

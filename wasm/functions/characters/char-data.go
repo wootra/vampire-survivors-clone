@@ -17,5 +17,8 @@ func CreateNewCharacterData() *types.CharacterData {
 		Armor:        0,
 		Life:         100,
 		Weapon:       weapon.CreateAWeapon(types.GUN),
-		MovementCode: types.MovementType{Up: false, Down: false, Left: false, Right: false}}
+		MovementCode: types.MovementType{Up: false, Down: false, Left: false, Right: false},
+		LastMovement: types.MovementType{Up: false, Down: false, Left: false, Right: false},
+		ImageKey:     "fish",
+	}
 }
