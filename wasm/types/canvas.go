@@ -43,14 +43,6 @@ func (ctx Context2D) Rotate(angle float32) {
 	js.Value(ctx).Call("rotate", angle)
 }
 
-func (c *Canvas) DrawBackground() {
-	if !js.Value(c.Background).IsUndefined() {
-		js.Value(c.Context).Call("drawImage", c.Background, 20, 20, 185, 175, 50, 50, 185, 175)
-	} else {
-		fmt.Println("background image is undefined")
-	}
-}
-
 func (c Canvas) Restore() {
 	js.Value(c.Context).Call("restore")
 }

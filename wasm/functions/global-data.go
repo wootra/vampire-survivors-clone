@@ -8,7 +8,7 @@ func CreateNewData() *types.Data {
 	return &types.Data{
 		Canvas:        CreateNewCanvas(),
 		Character:     &types.CharacterData{},
-		Enemies:       []*types.EnemyData{},
+		Enemies:       map[uint64]*types.EnemyData{},
 		GlueFunctions: nil,
 	}
 }

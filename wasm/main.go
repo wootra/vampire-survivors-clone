@@ -10,9 +10,27 @@ import (
 
 var imageLoaded = false
 var loadImageLoop *gameLoop.GameLoop = nil
+var bufferHandlerLoop *gameLoop.GameLoop = nil
+var gl *gameLoop.GameLoop = nil
+var update *gameLoop.GameLoop = nil
+
+func initWorld() *types.World {
+	world := &types.World{Active: 0, Apocalypse: false}
+	for i := range world.Pt {
+		for j := range world.Pt[0] {
+			world.Pt[i][j] = nil
+		}
+	}
+	world.BufferToDelete = make(chan int, 10)
+	world.MainChannel = make(chan bool)
+	return world
+}
 
 func main() {
 	var data *types.Data = funcs.CreateNewData()
+
+	var world *types.World = initWorld()
+
 	rand.Seed(100)
 	funcs.InitCharacters(data)
 	funcs.InitEvents(data)
@@ -21,24 +39,27 @@ func main() {
 		if funcs.CheckIfImageLoaded(data) {
 			imageLoaded = true
 			loadImageLoop.Stop()
+
 		}
 	})
 	var frame int = 0
-	gl := gameLoop.New(10, func(delta float64) {
+	gl = gameLoop.New(10, func(delta float64) {
 		frame++
 
 		// update values
 		if !imageLoaded {
 			return
 		}
-		funcs.CalculateHeroPos(data.Character)
+		funcs.CalculateHeroPos(data, world, world.Active)
 		data.Character.FrameIndex = (data.Character.FrameOffset + (frame / 10)) % 2
 		for _, enemy := range data.Enemies {
-			funcs.CalculateEnemyPos(data.Character, enemy)
+			funcs.CalculateEnemyPos(data, enemy, world, world.Active)
 		}
+		world.Active = (world.Active + 1) % 10
+		world.BufferToDelete <- (world.Active + 10 - 2) % 10 // delete unused buffer
 	})
 
-	update := gameLoop.New(100, func(delta float64) {
+	update = gameLoop.New(200, func(delta float64) {
 		if !imageLoaded {
 			return
 		}
@@ -46,12 +67,26 @@ func main() {
 		funcs.DrawInCanvas(data)
 	})
 
+	bufferHandlerLoop = gameLoop.New(100, func(delta float64) {
+		if world.Apocalypse {
+			bufferHandlerLoop.Stop()
+			gl.Stop()
+			update.Stop()
+			return
+		}
+		buf := <-world.BufferToDelete
+		for j := range world.Pt[buf] {
+			world.Pt[buf][j] = nil
+		}
+	})
+
 	gl.Start()
 	update.Start()
 	loadImageLoop.Start()
+	bufferHandlerLoop.Start()
 	// Stop Game Loop:
 	// gl.Stop()
 
 	// Don't stop main goroutine
-	<-make(chan bool)
+	<-world.MainChannel
 }

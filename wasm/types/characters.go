@@ -33,15 +33,22 @@ const (
 	HIT     EnemyStatus = 4
 )
 
+type PushedForce struct {
+	X float64
+	Y float64
+}
+
 type CharacterData struct {
-	PosX, PosY, Speed, Shield, Armor, Life float32
-	SpeedAdjust                            float32
+	Id                                     uint64
+	PosX, PosY, Speed, Shield, Armor, Life float64
+	SpeedAdjust                            float64
 	FrameIndex                             int
 	FrameOffset                            int
 	Weapon                                 Weapon
 	MovementCode                           MovementType
 	LastMovement                           MovementType
 	ImageKey                               string
+	PushedByOthers                         PushedForce
 }
 
 func (c *CharacterData) Stop() {
@@ -52,14 +59,18 @@ func (c *CharacterData) Stop() {
 }
 
 type EnemyData struct {
+	Id                                     uint64
 	CharName                               EnemyName
-	PosX, PosY, Speed, Shield, Armor, Life float32
-	SpeedAdjustX                           float32
-	SpeedAdjustY                           float32
+	PosX, PosY, Speed, Shield, Armor, Life float64
+	SpeedAdjustX                           float64
+	SpeedAdjustY                           float64
 	FrameIndex                             int
 	Weapon                                 Weapon
 	SwormType                              SwormType
 	Status                                 EnemyStatus
 	ImageKey                               string
-	Direction                              float32
+	Direction                              float64
+	PushedByOthers                         PushedForce
 }
+
+const CHAR_SIZE = 4

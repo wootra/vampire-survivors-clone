@@ -1,9 +1,12 @@
 package functions
 
 import (
+	"fmt"
 	"math"
+	"math/rand"
 
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
+	"github.com/wootra/vampire-survivors-clone/wasm/utils"
 )
 
 func AdjustSpeed(isDiagonal bool, character *types.CharacterData) {
@@ -80,57 +83,161 @@ func KeyUp(data *types.Data, keyCode string) {
 	}
 }
 
-func CalculateHeroPos(character *types.CharacterData) {
+func collisionForHero(data *types.Data, idsToFind []uint64, dirX, dirY float64) []uint64 {
+	ret := []uint64{}
+
+	for _, id := range idsToFind {
+		enemy := data.Enemies[id]
+		if enemy.PosX < data.Character.PosX+types.CHAR_SIZE &&
+			enemy.PosX > data.Character.PosX-types.CHAR_SIZE &&
+			enemy.PosY < data.Character.PosY+types.CHAR_SIZE &&
+			enemy.PosY > data.Character.PosY-types.CHAR_SIZE {
+			if int(rand.Float32()*100000)%int(1/enemy.Weapon.Probability) == 0 {
+				data.Character.Life -= enemy.Weapon.Damage * (enemy.Weapon.Accuracy + (1-enemy.Weapon.Accuracy)*rand.Float64())
+				fmt.Println("character is hit! left life:", data.Character.Life)
+			}
+			ret = append(ret, id)
+		}
+
+	}
+	return ret
+}
+
+func CalculateHeroPos(data *types.Data, world *types.World, active int) {
+	character := data.Character
 	speedY := character.Speed * character.SpeedAdjust
 	speedX := character.Speed * character.SpeedAdjust
 
 	move := character.MovementCode
+	nextX, nextY := character.PosX, character.PosY
 
 	if move.Down {
-		character.PosY += speedY
-		if character.PosY > 50 {
-			character.PosY = 50
+		nextY += speedY
+		if nextY > 50 {
+			nextY = 50
 		}
 	} else if move.Up {
-		character.PosY -= speedY
-		if character.PosY < -50 {
-			character.PosY = -50
+		nextY -= speedY
+		if nextY < -50 {
+			nextY = -50
 		}
 	}
 
 	if move.Right {
-		character.PosX += speedX
-		if character.PosX > 50 {
-			character.PosX = 50
+		nextX += speedX
+		if nextX > 50 {
+			nextX = 50
 		}
 	} else if move.Left {
-		character.PosX -= speedX
-		if character.PosX < -50 {
-			character.PosX = -50
+		nextX -= speedX
+		if nextX < -50 {
+			nextX = -50
 		}
 	}
-}
+	posInWorld := int((nextX+50)/10) + int((nextY+50)/10)*types.WORLD_WIDTH
 
-func ternary(test bool, a, b float32) float32 {
-	if test {
-		return a
+	idInPos := world.Pt[(active+10-1)%10][posInWorld]
+
+	distX := nextX - character.PosX
+	distY := nextY - character.PosY
+
+	hits := collisionForHero(data, idInPos, distX, distY)
+
+	if len(hits) == 0 {
+		character.PosX = nextX //update pos
+		character.PosY = nextY
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, character.Id)
 	} else {
-		return b
+		nextX = character.PosX + distX*0.1 //slow down the speed because of hits
+		nextY = character.PosY + distY*0.1
+		// calculate the room position again
+		posInWorld := int((nextX+50)/10) + int((nextY+50)/10)*types.WORLD_WIDTH
+		idInPos = world.Pt[(active+10-1)%10][posInWorld]
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, character.Id)
+		// push the enemies away
+		for _, enemyId := range hits {
+			data.Enemies[enemyId].PushedByOthers.X -= distX * 0.5
+			data.Enemies[enemyId].PushedByOthers.Y -= distY * 0.5
+		}
 	}
+
 }
 
-func CalculateEnemyPos(character *types.CharacterData, enemy *types.EnemyData) {
+func collisionForEnemy(data *types.Data, enemy *types.EnemyData, idsToFind []uint64, dirX, dirY float64) []uint64 {
+	ret := []uint64{}
 
-	dirX := float64(character.PosX - enemy.PosX)
-	dirY := float64(character.PosY - enemy.PosY)
+	for _, id := range idsToFind {
+		if id == data.Character.Id {
+			if enemy.PosX < data.Character.PosX+types.CHAR_SIZE &&
+				enemy.PosX > data.Character.PosX-types.CHAR_SIZE &&
+				enemy.PosY < data.Character.PosY+types.CHAR_SIZE &&
+				enemy.PosY > data.Character.PosY-types.CHAR_SIZE {
+				if int(rand.Float32()*100000)%int(1/enemy.Weapon.Probability) == 0 {
+					data.Character.Life -= enemy.Weapon.Damage * (enemy.Weapon.Accuracy + (1-enemy.Weapon.Accuracy)*rand.Float64())
+					fmt.Println("character is hit! left life:", data.Character.Life)
+				}
+				fmt.Println("collision with character")
+				ret = append(ret, id)
+			}
+		} else if id != enemy.Id {
+			otherEnemy := data.Enemies[id]
+			if enemy.PosX < otherEnemy.PosX+types.CHAR_SIZE &&
+				enemy.PosX > otherEnemy.PosX-types.CHAR_SIZE &&
+				enemy.PosY < otherEnemy.PosY+types.CHAR_SIZE &&
+				enemy.PosY > otherEnemy.PosY-types.CHAR_SIZE {
+				distX := (enemy.PosX - otherEnemy.PosX) / 10
+				distY := (enemy.PosY - otherEnemy.PosY) / 10
+
+				enemy.PushedByOthers.X += distX
+				enemy.PushedByOthers.Y += distY
+
+				data.Enemies[id].PushedByOthers.X -= distX //push the unit away
+				data.Enemies[id].PushedByOthers.Y -= distX
+				fmt.Println("collision with other enemy")
+				ret = append(ret, id)
+			}
+		}
+	}
+	return ret
+}
+
+func CalculateEnemyPos(data *types.Data, enemy *types.EnemyData, world *types.World, active int) {
+	character := data.Character
+	dirX := character.PosX - enemy.PosX
+	dirY := character.PosY - enemy.PosY
 
 	r := math.Sqrt(dirX*dirX + dirY*dirY)
 
-	enemy.PosX = enemy.PosX + enemy.Speed*float32(dirX/r)
-	enemy.PosY = enemy.PosY + enemy.Speed*float32(dirY/r)
-	if dirX > 0 {
-		enemy.Direction = 1
+	nextX := enemy.PosX + enemy.Speed*dirX/r + enemy.PushedByOthers.X
+	nextY := enemy.PosY + enemy.Speed*dirY/r + enemy.PushedByOthers.Y
+
+	if nextX < -50 || nextY < -50 || nextX > 50 || nextY > 50 {
+		//out side of the screen
+		enemy.PosX = nextX
+		enemy.PosY = nextY
+		return
 	}
-	enemy.Direction = ternary(dirX > 0, 1, -1)
+
+	enemy.Direction = utils.Ternary(dirX > 0, 1, -1)
+
+	posInWorld := int((nextX+50)/10) + int((nextY+50)/10)*types.WORLD_WIDTH
+	fmt.Println("posInWord:", posInWorld, int((nextX+50)/10), int((nextY+50)/10))
+	idInPos := world.Pt[(active+10-1)%10][posInWorld]
+	hits := collisionForEnemy(data, enemy, idInPos, dirX, dirY)
+	if len(hits) == 0 {
+		enemy.PosX = nextX //update pos
+		enemy.PosY = nextY
+		enemy.PushedByOthers.X = 0 //when nobody is there, force is removed.
+		enemy.PushedByOthers.Y = 0
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, enemy.Id)
+		enemy.FrameIndex = 0
+	} else { //some collided units
+		// do not move position
+		posInWorld := int((enemy.PosX+50)/10) + int((enemy.PosY+50)/10)*types.WORLD_WIDTH
+		idInPos = world.Pt[(active+10-1)%10][posInWorld]
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, enemy.Id)
+		enemy.FrameIndex = (enemy.FrameIndex)%2 + 1
+	}
+
 	// fmt.Println(math.Atan(dirY/dirX), enemy.Direction)
 }

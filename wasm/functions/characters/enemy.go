@@ -11,8 +11,8 @@ import (
 
 func CreateNewEnemyData(data *types.Data, CharName types.EnemyName) *types.EnemyData {
 
-	PosX := rand.Float32()*100 - 50
-	PosY := rand.Float32()*100 - 50
+	PosX := rand.Float64()*100 - 50
+	PosY := rand.Float64()*100 - 50
 
 	dir := rand.Intn(256) % 8 // probability will be distributed more
 	fmt.Println("enemy is added at:", PosX, PosY, "dir:", dir)
@@ -37,28 +37,29 @@ func CreateNewEnemyData(data *types.Data, CharName types.EnemyName) *types.Enemy
 	} else if dir == 7 { //top
 		PosY -= 100
 	}
-	var Speed, Armor, Shield, Life float32
+	var Speed, Armor, Shield, Life float64
 	var SwormType types.SwormType
 	var Weapon types.Weapon
 	var Status = types.IDLE
 
 	switch CharName {
 	case types.BAT:
-		Speed = float32(0.5)
-		Armor = float32(0)
-		Shield = float32(0)
-		Life = float32(100)
+		Speed = float64(0.5)
+		Armor = float64(0)
+		Shield = float64(0)
+		Life = float64(100)
 		SwormType = types.FLY
 		Weapon = weapon.CreateAWeapon(types.GUN)
 	default:
-		Speed = float32(0.5)
-		Armor = float32(0)
-		Shield = float32(0)
-		Life = float32(100)
+		Speed = float64(0.5)
+		Armor = float64(0)
+		Shield = float64(0)
+		Life = float64(100)
 		SwormType = types.FLY
 		Weapon = weapon.CreateAWeapon(types.GUN)
 	}
 	return &types.EnemyData{
+		Id:           types.GetNewId(),
 		CharName:     CharName,
 		PosX:         PosX,
 		PosY:         PosY,

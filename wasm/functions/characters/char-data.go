@@ -7,6 +7,7 @@ import (
 
 func CreateNewCharacterData() *types.CharacterData {
 	return &types.CharacterData{
+		Id:           types.GetNewId(),
 		PosX:         0,
 		PosY:         0,
 		Speed:        2,
