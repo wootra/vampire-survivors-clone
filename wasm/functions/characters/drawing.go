@@ -34,10 +34,9 @@ func DrawCharacter(data *types.Data, xScale, yScale, charSize float64) {
 
 }
 
-func DrawEnemy(data *types.Data, enemyId uint64, xScale, yScale, charSize float64) {
+func DrawEnemy(data *types.Data, enemy *types.EnemyData, xScale, yScale, charSize float64) {
 
 	data.Canvas.Save()
-	enemy := data.Enemies[enemyId]
 
 	data.Canvas.Context.Translate(int(enemy.PosX*xScale), int(enemy.PosY*yScale))
 

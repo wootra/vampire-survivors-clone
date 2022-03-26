@@ -2,6 +2,7 @@ package functions
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"syscall/js" //to fix the redline, refer .vscode/settings.json in this workspace
 
@@ -26,6 +27,12 @@ func CheckIfImageLoaded(data *types.Data) bool {
 	return true
 }
 
+type Enemies []*types.EnemyData
+
+func (a Enemies) Len() int           { return len(a) }
+func (a Enemies) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a Enemies) Less(i, j int) bool { return a[i].PosY < a[j].PosY || a[i].PosX < a[j].PosX }
+
 func DrawInCanvas(data *types.Data) {
 	if data.Canvas.CanvasFuncs == nil {
 		return
@@ -38,9 +45,16 @@ func DrawInCanvas(data *types.Data) {
 	var charSize float64 = types.CHAR_SIZE * xScale
 
 	characters.DrawCharacter(data, xScale, yScale, charSize)
+	enemies := []*types.EnemyData{}
+	for _, en := range data.Enemies {
+		enemies = append(enemies, en)
+	}
+	sort.Slice(enemies, func(i, j int) bool {
+		return enemies[i].PosY < enemies[j].PosY || enemies[i].PosX < enemies[j].PosX
+	})
 
-	for enemyNo := range data.Enemies {
-		characters.DrawEnemy(data, enemyNo, xScale, yScale, charSize)
+	for _, enemy := range enemies {
+		characters.DrawEnemy(data, enemy, xScale, yScale, charSize)
 	}
 }
 

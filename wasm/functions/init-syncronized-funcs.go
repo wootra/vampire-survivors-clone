@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"syscall/js" //to fix the redline, refer .vscode/settings.json in this workspace
 
-	"github.com/wootra/vampire-survivors-clone/wasm/functions/characters"
 	"github.com/wootra/vampire-survivors-clone/wasm/types"
 )
 
@@ -55,12 +54,4 @@ func InitEvents(data *types.Data) {
 	js.Global().Set("keyDown", Wrapper(data, keyDownSync))
 	js.Global().Set("keyUp", Wrapper(data, keyUpSync))
 	js.Global().Set("setBackground", Wrapper(data, setBackgroundSync))
-}
-
-func InitCharacters(data *types.Data) {
-	data.Character = characters.CreateNewCharacterData()
-	data.AddAnEnemy(characters.CreateNewEnemyData(data, types.BAT))
-	data.AddAnEnemy(characters.CreateNewEnemyData(data, types.BAT))
-	data.AddAnEnemy(characters.CreateNewEnemyData(data, types.BAT))
-	data.AddAnEnemy(characters.CreateNewEnemyData(data, types.BAT))
 }
