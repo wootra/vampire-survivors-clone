@@ -233,6 +233,11 @@ func CalculateEnemyPos(data *types.Data, enemy *types.EnemyData, world *types.Wo
 		enemy.FrameIndex = 0
 	} else { //some collided units
 		// do not move position
+		if enemy.PosX < -50 || enemy.PosY < -50 || enemy.PosX > 50 || enemy.PosY > 50 {
+			//out side of the screen
+			return
+		}
+	
 		posInWorld := int((enemy.PosX+50)/10) + int((enemy.PosY+50)/10)*types.WORLD_WIDTH
 		idInPos = world.Pt[(active+10-1)%10][posInWorld]
 		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, enemy.Id)
