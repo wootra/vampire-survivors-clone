@@ -1,5 +1,5 @@
 cd ./wasm
-GOOS=js GOARCH=wasm go build -o ../assets/result.wasm
+GOOS=js GOARCH=wasm go build -o ../public/result.wasm
 cd ..
-cp -rf ./asset-src/* ./assets
+cp -rf ./web/* ./public
 go run ./server
