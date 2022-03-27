@@ -12,7 +12,7 @@ var imageLoaded = false
 var loadImageLoop *gameLoop.GameLoop = nil
 var bufferHandlerLoop *gameLoop.GameLoop = nil
 var gl *gameLoop.GameLoop = nil
-var update *gameLoop.GameLoop = nil
+var update *gameLoop.GameLoop = nil 
 
 func initWorld() *types.World {
 	world := &types.World{Active: 0, Apocalypse: false}
