@@ -6,7 +6,7 @@ import "syscall/js"
 
 type Data struct {
 	Canvas        *Canvas
-	Character     *CharacterData
+	Character     *HeroData
 	GlueFunctions *js.Value
 	Enemies       map[uint64]*EnemyData
 }
@@ -26,12 +26,12 @@ type World struct {
 
 func (data *Data) AddAnEnemy(enemies ...*EnemyData) {
 	for _, enemy := range enemies {
-		data.Enemies[enemy.Id] = enemy
+		data.Enemies[enemy.CharInfo.Id] = enemy
 	}
 }
 
 func (data *Data) AddAnEnemies(enemies []*EnemyData) {
 	for _, enemy := range enemies {
-		data.Enemies[enemy.Id] = enemy
+		data.Enemies[enemy.CharInfo.Id] = enemy
 	}
 }

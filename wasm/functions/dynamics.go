@@ -9,11 +9,11 @@ import (
 	"github.com/wootra/vampire-survivors-clone/wasm/utils"
 )
 
-func AdjustSpeed(isDiagonal bool, character *types.CharacterData) {
+func AdjustSpeed(isDiagonal bool, character *types.HeroData) {
 	if isDiagonal {
-		character.SpeedAdjust = 0.7 // 1/1.414 since it is diagnonal movement
+		character.CharInfo.SpeedAdjust = 0.7 // 1/1.414 since it is diagnonal movement
 	} else {
-		character.SpeedAdjust = 1
+		character.CharInfo.SpeedAdjust = 1
 	}
 }
 
@@ -63,7 +63,7 @@ func KeyDown(data *types.Data, keyCode string) {
 	if !movement.Down {
 		lastMove.Down = false
 	}
-	data.Character.FrameOffset++
+	data.Character.CharInfo.FrameOffset++
 }
 
 func KeyUp(data *types.Data, keyCode string) {
@@ -88,14 +88,17 @@ func collisionForHero(data *types.Data, idsToFind []uint64, dirX, dirY float64) 
 
 	for _, id := range idsToFind {
 		enemy := data.Enemies[id]
-		if enemy.PosX < data.Character.PosX+types.CHAR_SIZE &&
-			enemy.PosX > data.Character.PosX-types.CHAR_SIZE &&
-			enemy.PosY < data.Character.PosY+types.CHAR_SIZE &&
-			enemy.PosY > data.Character.PosY-types.CHAR_SIZE {
-			if int(rand.Float32()*100000)%int(1/enemy.Weapon.Probability) == 0 {
-				data.Character.Life -= enemy.Weapon.Damage * (enemy.Weapon.Accuracy + (1-enemy.Weapon.Accuracy)*rand.Float64())
-				fmt.Println("character is hit! left life:", data.Character.Life)
-			}
+		if enemy.CharInfo.PosX < data.Character.CharInfo.PosX+types.CHAR_SIZE &&
+			enemy.CharInfo.PosX > data.Character.CharInfo.PosX-types.CHAR_SIZE &&
+			enemy.CharInfo.PosY < data.Character.CharInfo.PosY+types.CHAR_SIZE &&
+			enemy.CharInfo.PosY > data.Character.CharInfo.PosY-types.CHAR_SIZE {
+				for _,weapon := range enemy.Weapon {
+					if int(rand.Float32()*100000)%int(1/weapon.Probability) == 0 {
+						data.Character.CharInfo.Life -= weapon.Damage * (weapon.Accuracy + (1-weapon.Accuracy)*rand.Float64())
+						fmt.Println("character is hit! left life:", data.Character.CharInfo.Life)
+					}
+				}
+			
 			ret = append(ret, id)
 		}
 
@@ -105,11 +108,11 @@ func collisionForHero(data *types.Data, idsToFind []uint64, dirX, dirY float64) 
 
 func CalculateHeroPos(data *types.Data, world *types.World, active int) {
 	character := data.Character
-	speedY := character.Speed * character.SpeedAdjust
-	speedX := character.Speed * character.SpeedAdjust
+	speedY := character.CharInfo.Speed * character.CharInfo.SpeedAdjust
+	speedX := character.CharInfo.Speed * character.CharInfo.SpeedAdjust
 
 	move := character.MovementCode
-	nextX, nextY := character.PosX, character.PosY
+	nextX, nextY := character.CharInfo.PosX, character.CharInfo.PosY
 
 	if move.Down {
 		nextY += speedY
@@ -138,26 +141,26 @@ func CalculateHeroPos(data *types.Data, world *types.World, active int) {
 
 	idInPos := world.Pt[(active+10-1)%10][posInWorld]
 
-	distX := nextX - character.PosX
-	distY := nextY - character.PosY
+	distX := nextX - character.CharInfo.PosX
+	distY := nextY - character.CharInfo.PosY
 
 	hits := collisionForHero(data, idInPos, distX, distY)
 
 	if len(hits) == 0 {
-		character.PosX = nextX //update pos
-		character.PosY = nextY
-		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, character.Id)
+		character.CharInfo.PosX = nextX //update pos
+		character.CharInfo.PosY = nextY
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, character.CharInfo.Id)
 	} else {
-		nextX = character.PosX + distX*0.1 //slow down the speed because of hits
-		nextY = character.PosY + distY*0.1
+		nextX = character.CharInfo.PosX + distX*0.1 //slow down the speed because of hits
+		nextY = character.CharInfo.PosY + distY*0.1
 		// calculate the room position again
 		posInWorld := int((nextX+50)/10) + int((nextY+50)/10)*types.WORLD_WIDTH
 		idInPos = world.Pt[(active+10-1)%10][posInWorld]
-		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, character.Id)
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, character.CharInfo.Id)
 		// push the enemies away
 		for _, enemyId := range hits {
-			data.Enemies[enemyId].PushedByOthers.X -= distX * 0.5
-			data.Enemies[enemyId].PushedByOthers.Y -= distY * 0.5
+			data.Enemies[enemyId].CharInfo.PushedByOthers.X -= distX * 0.5
+			data.Enemies[enemyId].CharInfo.PushedByOthers.Y -= distY * 0.5
 		}
 	}
 
@@ -167,32 +170,35 @@ func collisionForEnemy(data *types.Data, enemy *types.EnemyData, idsToFind []uin
 	ret := []uint64{}
 
 	for _, id := range idsToFind {
-		if id == data.Character.Id {
-			if enemy.PosX < data.Character.PosX+types.CHAR_SIZE &&
-				enemy.PosX > data.Character.PosX-types.CHAR_SIZE &&
-				enemy.PosY < data.Character.PosY+types.CHAR_SIZE &&
-				enemy.PosY > data.Character.PosY-types.CHAR_SIZE {
-				if int(rand.Float32()*100000)%int(1/enemy.Weapon.Probability) == 0 {
-					data.Character.Life -= enemy.Weapon.Damage * (enemy.Weapon.Accuracy + (1-enemy.Weapon.Accuracy)*rand.Float64())
-					fmt.Println("character is hit! left life:", data.Character.Life)
-				}
+		if id == data.Character.CharInfo.Id {
+			if enemy.CharInfo.PosX < data.Character.CharInfo.PosX+types.CHAR_SIZE &&
+				enemy.CharInfo.PosX > data.Character.CharInfo.PosX-types.CHAR_SIZE &&
+				enemy.CharInfo.PosY < data.Character.CharInfo.PosY+types.CHAR_SIZE &&
+				enemy.CharInfo.PosY > data.Character.CharInfo.PosY-types.CHAR_SIZE {
+					for _,weapon := range enemy.CharInfo.Weapon {
+						if int(rand.Float32()*100000)%int(1/weapon.Probability) == 0 {
+							data.Character.CharInfo.Life -= weapon.Damage * (weapon.Accuracy + (1-weapon.Accuracy)*rand.Float64())
+							fmt.Println("character is hit! left life:", data.Character.CharInfo.Life)
+						}
+					}
+				
 				fmt.Println("collision with character")
 				ret = append(ret, id)
 			}
-		} else if id != enemy.Id {
+		} else if id != enemy.CharInfo.Id {
 			otherEnemy := data.Enemies[id]
-			if enemy.PosX < otherEnemy.PosX+types.CHAR_SIZE &&
-				enemy.PosX > otherEnemy.PosX-types.CHAR_SIZE &&
-				enemy.PosY < otherEnemy.PosY+types.CHAR_SIZE &&
-				enemy.PosY > otherEnemy.PosY-types.CHAR_SIZE {
-				distX := (enemy.PosX - otherEnemy.PosX) / 10
-				distY := (enemy.PosY - otherEnemy.PosY) / 10
+			if enemy.CharInfo.PosX < otherEnemy.CharInfo.PosX+types.CHAR_SIZE &&
+				enemy.CharInfo.PosX > otherEnemy.CharInfo.PosX-types.CHAR_SIZE &&
+				enemy.CharInfo.PosY < otherEnemy.CharInfo.PosY+types.CHAR_SIZE &&
+				enemy.CharInfo.PosY > otherEnemy.CharInfo.PosY-types.CHAR_SIZE {
+				distX := (enemy.CharInfo.PosX - otherEnemy.CharInfo.PosX) / 10
+				distY := (enemy.CharInfo.PosY - otherEnemy.CharInfo.PosY) / 10
 
-				enemy.PushedByOthers.X += distX
-				enemy.PushedByOthers.Y += distY
+				enemy.CharInfo.PushedByOthers.X += distX
+				enemy.CharInfo.PushedByOthers.Y += distY
 
-				data.Enemies[id].PushedByOthers.X -= distX //push the unit away
-				data.Enemies[id].PushedByOthers.Y -= distX
+				data.Enemies[id].CharInfo.PushedByOthers.X -= distX //push the unit away
+				data.Enemies[id].CharInfo.PushedByOthers.Y -= distX
 				fmt.Println("collision with other enemy")
 				ret = append(ret, id)
 			}
@@ -203,18 +209,18 @@ func collisionForEnemy(data *types.Data, enemy *types.EnemyData, idsToFind []uin
 
 func CalculateEnemyPos(data *types.Data, enemy *types.EnemyData, world *types.World, active int) {
 	character := data.Character
-	dirX := character.PosX - enemy.PosX
-	dirY := character.PosY - enemy.PosY
+	dirX := character.CharInfo.PosX - enemy.CharInfo.PosX
+	dirY := character.CharInfo.PosY - enemy.CharInfo.PosY
 
 	r := math.Sqrt(dirX*dirX + dirY*dirY)
 
-	nextX := enemy.PosX + enemy.Speed*dirX/r + enemy.PushedByOthers.X
-	nextY := enemy.PosY + enemy.Speed*dirY/r + enemy.PushedByOthers.Y
+	nextX := enemy.CharInfo.PosX + enemy.CharInfo.Speed*dirX/r + enemy.CharInfo.PushedByOthers.X
+	nextY := enemy.CharInfo.PosY + enemy.CharInfo.Speed*dirY/r + enemy.CharInfo.PushedByOthers.Y
 
 	if nextX < -50 || nextY < -50 || nextX > 50 || nextY > 50 {
 		//out side of the screen
-		enemy.PosX = nextX
-		enemy.PosY = nextY
+		enemy.CharInfo.PosX = nextX
+		enemy.CharInfo.PosY = nextY
 		return
 	}
 
@@ -225,23 +231,23 @@ func CalculateEnemyPos(data *types.Data, enemy *types.EnemyData, world *types.Wo
 	idInPos := world.Pt[(active+10-1)%10][posInWorld]
 	hits := collisionForEnemy(data, enemy, idInPos, dirX, dirY)
 	if len(hits) == 0 {
-		enemy.PosX = nextX //update pos
-		enemy.PosY = nextY
-		enemy.PushedByOthers.X = 0 //when nobody is there, force is removed.
-		enemy.PushedByOthers.Y = 0
-		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, enemy.Id)
-		enemy.FrameIndex = 0
+		enemy.CharInfo.PosX = nextX //update pos
+		enemy.CharInfo.PosY = nextY
+		enemy.CharInfo.PushedByOthers.X = 0 //when nobody is there, force is removed.
+		enemy.CharInfo.PushedByOthers.Y = 0
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, enemy.CharInfo.Id)
+		enemy.CharInfo.FrameIndex = 0
 	} else { //some collided units
 		// do not move position
-		if enemy.PosX < -50 || enemy.PosY < -50 || enemy.PosX > 50 || enemy.PosY > 50 {
-			//out side of the screen
+		if enemy.CharInfo.PosX < -50 || enemy.CharInfo.PosY < -50 || enemy.CharInfo.PosX > 50 || enemy.CharInfo.PosY > 50 {
+			//out side of the screen, should not affect to each other
 			return
 		}
 	
-		posInWorld := int((enemy.PosX+50)/10) + int((enemy.PosY+50)/10)*types.WORLD_WIDTH
+		posInWorld := int((enemy.CharInfo.PosX+50)/10) + int((enemy.CharInfo.PosY+50)/10)*types.WORLD_WIDTH
 		idInPos = world.Pt[(active+10-1)%10][posInWorld]
-		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, enemy.Id)
-		enemy.FrameIndex = (enemy.FrameIndex)%2 + 1
+		world.Pt[(active+10-1)%10][posInWorld] = append(idInPos, enemy.CharInfo.Id)
+		enemy.CharInfo.FrameIndex = (enemy.CharInfo.FrameIndex)%2 + 1
 	}
 
 	// fmt.Println(math.Atan(dirY/dirX), enemy.Direction)

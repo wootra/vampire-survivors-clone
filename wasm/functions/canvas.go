@@ -31,7 +31,7 @@ type Enemies []*types.EnemyData
 
 func (a Enemies) Len() int           { return len(a) }
 func (a Enemies) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a Enemies) Less(i, j int) bool { return a[i].PosY < a[j].PosY || a[i].PosX < a[j].PosX }
+func (a Enemies) Less(i, j int) bool { return a[i].CharInfo.PosY < a[j].CharInfo.PosY || a[i].CharInfo.PosX < a[j].CharInfo.PosX }
 
 func DrawInCanvas(data *types.Data) {
 	if data.Canvas.CanvasFuncs == nil {
@@ -50,7 +50,7 @@ func DrawInCanvas(data *types.Data) {
 		enemies = append(enemies, en)
 	}
 	sort.Slice(enemies, func(i, j int) bool {
-		return enemies[i].PosY < enemies[j].PosY || enemies[i].PosX < enemies[j].PosX
+		return enemies[i].CharInfo.PosY < enemies[j].CharInfo.PosY || enemies[i].CharInfo.PosX < enemies[j].CharInfo.PosX
 	})
 
 	for _, enemy := range enemies {

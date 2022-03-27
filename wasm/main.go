@@ -51,7 +51,7 @@ func main() {
 			return
 		}
 		funcs.CalculateHeroPos(data, world, world.Active)
-		data.Character.FrameIndex = (data.Character.FrameOffset + (frame / 10)) % 2
+		data.Character.CharInfo.FrameIndex = (data.Character.CharInfo.FrameOffset + (frame / 10)) % 2
 		for _, enemy := range data.Enemies {
 			funcs.CalculateEnemyPos(data, enemy, world, world.Active)
 		}
