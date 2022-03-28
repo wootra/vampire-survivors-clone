@@ -20,19 +20,15 @@ MODIFIED=0
 while true;
 do
   sleep 3;
-  clear;
+  
   DATELOG=""
   for aFile in $(cat $LOG_FOLDER/go_files.log)
   do
     DATELOG+="$(date -r $aFile)"
   done
-#   echo $DATELOG > curr_dates.log
-  RESULT=true
-  
-  if [[ $DATELOG != $DATELOG_ORG ]]; then RESULT="DIFF"; else RESULT="SAME"; fi
-  echo "is it different? $RESULT"
+
   if [[ $DATELOG != $DATELOG_ORG ]]; then 
-    
+    clear;
     # diff ./curr_dates.log ./org_dates.log
     MODIFIED=$(expr $MODIFIED + 1);
     echo "change is detected! $MODIFIED"; 
@@ -40,7 +36,5 @@ do
     cp -rf ../web/* ../public;
     DATELOG_ORG=$DATELOG;
     # echo $DATELOG_ORG > org_dates.log
-  else
-    echo "files are being monitored...(changed: $MODIFIED)"
   fi
 done
