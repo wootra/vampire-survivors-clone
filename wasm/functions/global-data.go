@@ -15,11 +15,9 @@ func CreateNewData() *types.Data {
 
 func InitCharacters(data *types.Data) {
 	data.Character = types.CreateAHero(types.GoldFish)
-	for i := 0; i < 100; i++ {
-		data.AddAnEnemy(types.CreateAnEnemy(types.CAT_SOLDIER))
-		// data.AddAnEnemy(characters.CreateNewEnemyData(data, types.CAT_SOLDIER))
-		// data.AddAnEnemy(characters.CreateNewEnemyData(data, types.CAT_SOLDIER))
-		// data.AddAnEnemy(characters.CreateNewEnemyData(data, types.CAT_SOLDIER))
-	}
+	data.AddAnEnemy(types.CreateAnEnemy(types.CAT_SOLDIER))
+	// for i := 0; i < 100; i++ {
+	// 	data.AddAnEnemy(types.CreateAnEnemy(types.CAT_SOLDIER))
+	// }
 
 }

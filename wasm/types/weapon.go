@@ -20,9 +20,9 @@ type WeaponDetail struct {
 }
 
 var WeaponDetails = map[WeaponType]WeaponDetail {
-	HIT_BY_BODY: WeaponDetail{WeaponType: HIT_BY_BODY, ImageKey: "hit-image-set", Name: "Hit by body!", MaxLevel: 10, Range:1},
-	BUBBLE_SHOT: WeaponDetail{WeaponType: BUBBLE_SHOT, ImageKey: "bubble-image-set", Name: "Hit by body!", MaxLevel: 10, Range:1},
-	EXPLODE: WeaponDetail{WeaponType: EXPLODE, ImageKey: "explode-image-set", Name: "Hit by body!", MaxLevel: 10, Range:1},
+	HIT_BY_BODY: {WeaponType: HIT_BY_BODY, ImageKey: "hit-image-set", Name: "Hit by body!", MaxLevel: 10, Range:1},
+	BUBBLE_SHOT: {WeaponType: BUBBLE_SHOT, ImageKey: "bubble-image-set", Name: "Hit by body!", MaxLevel: 10, Range:1},
+	EXPLODE: {WeaponType: EXPLODE, ImageKey: "explode-image-set", Name: "Hit by body!", MaxLevel: 10, Range:1},
 
 }
 

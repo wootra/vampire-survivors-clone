@@ -17,6 +17,7 @@ type CharacterDetail struct {
 	Speed, Shield, Armor, Life float64 //init values
 	ImageKey                               string
 	Weapon                                 []Weapon //only init weapons
+	Size float64
 }
 
 type CharacterInfo struct {
@@ -33,6 +34,7 @@ type CharacterInfo struct {
 	SpeedAdjustY                           float64
 	CurrSpeedX	float64  // based on direction, split x and y factor of the speed to figure out the bounce strength
 	CurrSpeedY	float64
+
 }
 
 func (c *CharacterInfo) setId(id uint64) {

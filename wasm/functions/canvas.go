@@ -33,6 +33,8 @@ func (a Enemies) Len() int           { return len(a) }
 func (a Enemies) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a Enemies) Less(i, j int) bool { return a[i].CharInfo.PosY < a[j].CharInfo.PosY || a[i].CharInfo.PosX < a[j].CharInfo.PosX }
 
+
+
 func DrawInCanvas(data *types.Data) {
 	if data.Canvas.CanvasFuncs == nil {
 		return
@@ -40,11 +42,7 @@ func DrawInCanvas(data *types.Data) {
 
 	data.Canvas.CanvasFuncs.Call("getBackground", "back-1")
 
-	xScale := float64(data.Canvas.Width) / 100
-	yScale := float64(data.Canvas.Height) / 100
-	var charSize float64 = types.CHAR_SIZE * xScale
-
-	characters.DrawCharacter(data, xScale, yScale, charSize)
+	characters.DrawCharacter(data)
 	enemies := []*types.EnemyData{}
 	for _, en := range data.Enemies {
 		enemies = append(enemies, en)
@@ -54,7 +52,7 @@ func DrawInCanvas(data *types.Data) {
 	})
 
 	for _, enemy := range enemies {
-		characters.DrawEnemy(data, enemy, xScale, yScale, charSize)
+		characters.DrawEnemy(data, enemy)
 	}
 }
 

@@ -17,9 +17,7 @@ var update *gameLoop.GameLoop = nil
 func initWorld() *types.World {
 	world := &types.World{Active: 0, Apocalypse: false}
 	for i := range world.Pt {
-		for j := range world.Pt[0] {
-			world.Pt[i][j] = nil
-		}
+		world.Pt[i]= nil
 	}
 	world.BufferToDelete = make(chan int, 10)
 	world.MainChannel = make(chan bool)
@@ -75,9 +73,13 @@ func main() {
 			return
 		}
 		buf := <-world.BufferToDelete
-		for j := range world.Pt[buf] {
-			world.Pt[buf][j] = nil
+		for xKey,map1:= range world.Pt[buf]{
+			for yKey:=range map1 {
+				map1[yKey] = nil
+			}
+			map1[xKey] = nil
 		}
+		world.Pt[buf] = nil
 	})
 
 	gl.Start()

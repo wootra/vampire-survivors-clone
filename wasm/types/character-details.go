@@ -1,7 +1,7 @@
 package types
 
 var CharDetails = map[HeroName]CharacterDetail{
-	GoldFish: CharacterDetail{
+	GoldFish: {
 		Name: GoldFish,
 		Speed: 2, 
 		Shield: 0, 
@@ -11,13 +11,14 @@ var CharDetails = map[HeroName]CharacterDetail{
     	Weapon: []Weapon{
 			CreateAWeapon(BUBBLE_SHOT),
 		},
+		Size: CHAR_SIZE,
 	},
 }
 
 var EnemyDetails = map[EnemyType]CharacterDetail{
-	CAT_SOLDIER: CharacterDetail{
+	CAT_SOLDIER: {
 		Name: "Cat Soldier",
-		Speed: 1, 
+		Speed: 0.5, 
 		Shield: 0, 
 		Armor:0, 
 		Life: 50, //init values
@@ -25,5 +26,6 @@ var EnemyDetails = map[EnemyType]CharacterDetail{
     	Weapon: []Weapon{
 			CreateAWeapon(HIT_BY_BODY),
 		},
+		Size: CHAR_SIZE,
 	},
 }
